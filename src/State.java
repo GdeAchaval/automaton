@@ -9,24 +9,28 @@ import java.util.Map;
  */
 public class State {
 
+    private String name;
     private Map<Character, List<State>> transitions;
-    private final String wordOfEndingState;
+    private String wordOfEndingState;
 
-
-    public State() {
+    
+    State(String name) {
+        this.name = name;
         this.transitions = new HashMap<>();
         wordOfEndingState = null;
     }
 
-    public State(String wordOfEndingState) {
+    State(String name, String wordOfEndingState) {
+        this.name = name;
         this.wordOfEndingState = wordOfEndingState;
+        this.transitions = new HashMap<>();
     }
 
-    public boolean isEndingState(){
+    boolean isEndingState(){
         return wordOfEndingState != null;
     }
 
-    public void addNewTransition(char character, State nextState){
+    void addNewTransition(char character, State nextState){
         if(transitions.containsKey(character)){
             transitions.get(character).add(nextState);
         }
@@ -38,28 +42,39 @@ public class State {
     }
 
     public boolean hasTransition(char character){
-        if(transitions.containsKey(character)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return transitions.containsKey(character);
     }
 
     public List<State> getTransitionStates(char character){
         return transitions.get(character);
     }
+    
+    void convertToEndingState(String endingWord){
+        wordOfEndingState = endingWord;
+    }
+    
+    String getEndingWord(){
+        return wordOfEndingState;
+    }
 
     public String toString(){
         if(wordOfEndingState != null){
-            return "End state " + wordOfEndingState;
+            return "-"+name+"- End state " + wordOfEndingState;
         }
         else{
             String result = "";
             for (Character character : transitions.keySet()) {
                 result += character + " ";
             }
-            return "Goes to " + result;
+            return "-"+name+"- Moves with " + result;
         }
+    }
+
+    Map<Character,List<State>> getTransitions() {
+        return transitions;
+    }
+
+    String getName() {
+        return name;
     }
 }

@@ -9,6 +9,8 @@ public class SimpleTest {
 
     public static void main(String[] args) {
         List<String> words = Arrays.asList("Hi","Ho");
-        WordDetectionAutomaton automaton = new WordDetectionAutomaton(words);
+        WordDetectionAutomaton nonDeterministic = new WordDetectionAutomaton(words);
+
+        WordDetectionAutomaton deterministic = nonDeterministic.createDeterministic();
     }
 }
