@@ -7,27 +7,28 @@ import java.util.*;
 public class WordDetectionAutomaton {
     private State initialState;
     private State currentState;
-    private HashMap<String, Integer> frequency;
+    private List<String> phrases;
 
     public WordDetectionAutomaton(List<String> phrases){
         initialState = new State("0");
         currentState = initialState;
-        frequency = new HashMap<>(); //TODO crear tabla con phrases
+        this.phrases = phrases;
         generateAutomaton(phrases);
     }
 
-    private WordDetectionAutomaton(State initialState){
+    private WordDetectionAutomaton(State initialState, List<String> phrases){
         this.initialState = initialState;
         currentState = initialState;
-        frequency = new HashMap<>();
+        this.phrases = phrases;
     }
 
     private void generateAutomaton(List<String> phrases) {
         int name = 1;
         for (String phrase : phrases) {
+            //program is case insensitive
+            String lowerCase = phrase.toLowerCase();
 
-
-            char[] characters = phrase.toCharArray();
+            char[] characters = lowerCase.toCharArray();
 
             State aux = initialState;
             for (int i = 0; i <= characters.length -2; i++) {
@@ -49,7 +50,7 @@ public class WordDetectionAutomaton {
         State nonDeterminState = initialState;
         makeDeterministic(determinState, Arrays.asList(nonDeterminState));
 
-        return new WordDetectionAutomaton(determinState);
+        return new WordDetectionAutomaton(determinState, phrases);
     }
 
     private void makeDeterministic(State determinState, List<State> nonDeterminStates) {
@@ -104,8 +105,38 @@ public class WordDetectionAutomaton {
             states.add(state);
             map.put(character, states);
         }
-
     }
+
+    public Map<String, Integer> getFrequencies(String text){
+        String lowerCase = text.toLowerCase();
+        char[] array = lowerCase.toCharArray();
+        Map<String, Integer> frequencies = new HashMap<>();
+        for (String phrase : phrases) {
+            frequencies.put(phrase, 0);
+        }
+
+        for (char character : array) {
+            if(currentState.hasTransition(character)){
+                List<State> listOfStates= currentState.getTransitionStates(character);
+                //asumo que estoy llamando al metodo en un determinista
+                currentState = listOfStates.get(0);
+            }
+            else {
+                currentState = initialState;
+            }
+
+            if(currentState.isEndingState()){
+                String word = currentState.getEndingWord();
+                frequencies.put(word,frequencies.get(word) + 1);
+                // TODO discutir si aca se vuelve a q0 de una
+            }
+        }
+
+        return frequencies;
+    }
+
+
+
 
 
 }

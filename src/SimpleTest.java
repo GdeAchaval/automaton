@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Agustin Bettati
@@ -8,9 +9,12 @@ import java.util.List;
 public class SimpleTest {
 
     public static void main(String[] args) {
-        List<String> words = Arrays.asList("Hi","Ho");
+        List<String> words = Arrays.asList("ganar", "tincho");
         WordDetectionAutomaton nonDeterministic = new WordDetectionAutomaton(words);
 
         WordDetectionAutomaton deterministic = nonDeterministic.createDeterministic();
+
+        Map<String, Integer> frequencies = deterministic.getFrequencies("ganar 22 ganar tincho for life");
+
     }
 }

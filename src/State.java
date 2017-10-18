@@ -48,6 +48,7 @@ public class State {
     public List<State> getTransitionStates(char character){
         return transitions.get(character);
     }
+
     
     void convertToEndingState(String endingWord){
         wordOfEndingState = endingWord;
