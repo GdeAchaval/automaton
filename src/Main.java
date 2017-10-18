@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-        List<String> phrases = Arrays.asList("ho la", "hola mundo", "jorge");
+        List<String> phrases = Arrays.asList("hola mundo", "mundo");
         WordDetectionAutomaton automaton = new WordDetectionAutomaton(phrases);
         WordDetectionAutomaton deterministic = automaton.createDeterministic();
 

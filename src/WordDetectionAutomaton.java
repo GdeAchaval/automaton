@@ -117,6 +117,7 @@ public class WordDetectionAutomaton {
             frequencies.put(phrase, 0);
         }
 
+        char prevChar = 'a';
         for (char character : array) {
             if(currentState.hasTransition(character)){
                 List<State> listOfStates= currentState.getTransitionStates(character);
@@ -125,6 +126,13 @@ public class WordDetectionAutomaton {
             }
             else {
                 currentState = initialState;
+                if(prevChar == ' '){
+                    if(currentState.hasTransition(character)){
+                        List<State> listOfStates= currentState.getTransitionStates(character);
+                        //asumo que estoy llamando al metodo en un determinista
+                        currentState = listOfStates.get(0);
+                    }
+                }
             }
 
             if(currentState.isEndingState()){
@@ -132,6 +140,8 @@ public class WordDetectionAutomaton {
                 frequencies.put(word,frequencies.get(word) + 1);
                 // TODO discutir si aca se vuelve a q0 de una
             }
+
+            prevChar = character;
         }
 
         return frequencies;
