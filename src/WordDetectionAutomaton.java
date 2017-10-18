@@ -137,8 +137,7 @@ public class WordDetectionAutomaton {
         return frequencies;
     }
 
-
-
-
-
+    public State getInitialState() {
+        return initialState;
+    }
 }
