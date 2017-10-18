@@ -1,6 +1,8 @@
 import java.util.*;
 
 /**
+ * @author Gonzalo De Achaval
+ * @author Marcos Khabie
  * @author Agustin Bettati
  * @version 1.0
  */

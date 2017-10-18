@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author Gonzalo De Achaval
+ * @author Marcos Khabie
  * @author Agustin Bettati
  * @version 1.0
  */
@@ -30,6 +32,10 @@ public class State {
         return wordOfEndingState != null;
     }
 
+    void convertToEndingState(String endingWord){
+        wordOfEndingState = endingWord;
+    }
+
     void addNewTransition(char character, State nextState){
         if(transitions.containsKey(character)){
             transitions.get(character).add(nextState);
@@ -49,9 +55,12 @@ public class State {
         return transitions.get(character);
     }
 
-    
-    void convertToEndingState(String endingWord){
-        wordOfEndingState = endingWord;
+    Map<Character,List<State>> getTransitions() {
+        return transitions;
+    }
+
+    String getName() {
+        return name;
     }
     
     String getEndingWord(){
@@ -71,11 +80,4 @@ public class State {
         }
     }
 
-    Map<Character,List<State>> getTransitions() {
-        return transitions;
-    }
-
-    String getName() {
-        return name;
-    }
 }
