@@ -208,5 +208,8 @@ public class WordDetectionAutomaton {
     public State getInitialState() {
         return initialState;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f03f29969ec9d306475953d7d25ecf8f9c84dcd1
 }
