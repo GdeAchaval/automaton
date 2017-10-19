@@ -34,10 +34,8 @@ public class State {
     }
 
 
-    public void addEndingWords(List<String> endingWords) {
-        for (String endingWord : endingWords) {
-            wordsOfEndingState.add(endingWord);
-        }
+    void addEndingWords(List<String> endingWords) {
+        wordsOfEndingState.addAll(endingWords);
     }
     void addNewTransition(char character, State nextState){
         if(transitions.containsKey(character)){
@@ -50,11 +48,11 @@ public class State {
         }
     }
 
-    public boolean hasTransition(char character){
+    boolean hasTransition(char character){
         return transitions.containsKey(character);
     }
 
-    public List<State> getTransitionStates(char character){
+    List<State> getTransitionStates(char character){
         return transitions.get(character);
     }
 
@@ -71,17 +69,17 @@ public class State {
     }
 
     public String toString(){
-        String endingState = "";
+        StringBuilder endingState = new StringBuilder();
         for (String word : wordsOfEndingState) {
-            endingState += word + " ";
+            endingState.append(word).append(" ");
         }
         if(!wordsOfEndingState.isEmpty()){
             return "-"+name+"- End state " + endingState;
         }
         else{
-            String result = "";
+            StringBuilder result = new StringBuilder();
             for (Character character : transitions.keySet()) {
-                result += character + " ";
+                result.append(character).append(" ");
             }
             return "-"+name+"- Moves with " + result;
         }

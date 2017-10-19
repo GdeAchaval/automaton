@@ -19,7 +19,7 @@ public class Util {
         }
     }
 
-    public static void generateDot(String filename, State initialState) throws IOException {
+    static void generateDot(String filename, State initialState) throws IOException {
 
         ArrayList<State> allStates = new ArrayList<>();
         allStates.add(initialState);
@@ -44,7 +44,9 @@ public class Util {
         } else {
             fw.write(Shapes.CIRCLE.getName());
         }
-        fw.write("] Node" + name + "[label=\"" + name + "\"];\n");
+        String tidyName = name.replaceAll("_", " ");
+        tidyName = tidyName.substring(1, tidyName.length());
+        fw.write("] Node" + name + "[label=\"" + tidyName + "\"];\n");
     }
 
     private static void getAllStates(List<State> rslt) {
@@ -92,7 +94,7 @@ public class Util {
         createPNGfromDOT("src/files/testDet.dot");
     }
 
-    public static void createPNGfromDOT(String name) throws IOException {
+    static void createPNGfromDOT(String name) throws IOException {
         File f = new File(name);
         String arg1 = f.getAbsolutePath();
         String arg2 = arg1.substring(0, arg1.length()-4) + ".png"; //delete .dot, add.png

@@ -6,12 +6,12 @@ import java.util.*;
  * @author Agustin Bettati
  * @version 1.0
  */
-public class WordDetectionAutomaton {
+class WordDetectionAutomaton {
     private State initialState;
     private State currentState;
     private List<String> phrases;
 
-    public WordDetectionAutomaton(List<String> phrases){
+    WordDetectionAutomaton(List<String> phrases){
         initialState = new State("_0");
         currentState = initialState;
         this.phrases = phrases;
@@ -59,11 +59,11 @@ public class WordDetectionAutomaton {
         }
     }
 
-    public WordDetectionAutomaton createDeterministic(){
+    WordDetectionAutomaton createDeterministic(){
         State determinState = new State("_0");
 
         State nonDeterminState = initialState;
-        makeDeterministic(determinState, Arrays.asList(nonDeterminState), determinState);
+        makeDeterministic(determinState, Collections.singletonList(nonDeterminState), determinState);
 
         return new WordDetectionAutomaton(determinState, phrases);
     }
@@ -94,7 +94,6 @@ public class WordDetectionAutomaton {
         }
 
         for (Map.Entry<Character, List<State>> transitions : determinTransitions.entrySet()) {
-            char character = transitions.getKey();
             List<State> states = transitions.getValue();
 
             State combinedState = findCombinedState(determinInit, states);
@@ -112,11 +111,11 @@ public class WordDetectionAutomaton {
     }
 
     private State findCombinedState(State determinInit, List<State> states) {
-        String allNumbers = "";
+        StringBuilder allNumbers = new StringBuilder();
         for (State state : states) {
-            allNumbers += state.getName();
+            allNumbers.append(state.getName());
         }
-        String[] nonDetStates = allNumbers.split("_");
+        String[] nonDetStates = allNumbers.toString().split("_");
 
         final List<State> allDeterminStates = new ArrayList<>();
         allDeterminStates.add(determinInit);
@@ -126,8 +125,8 @@ public class WordDetectionAutomaton {
             String nameOfPosibleState = determinState.getName();
             String[] determinCombinedState = nameOfPosibleState.split("_");
 
-            HashSet<String> set1 = new HashSet<String>(Arrays.asList(nonDetStates));
-            HashSet<String> set2 = new HashSet<String>(Arrays.asList(determinCombinedState));
+            HashSet<String> set1 = new HashSet<>(Arrays.asList(nonDetStates));
+            HashSet<String> set2 = new HashSet<>(Arrays.asList(determinCombinedState));
             if(set1.equals(set2)){
                 return determinState;
             }
@@ -169,7 +168,7 @@ public class WordDetectionAutomaton {
         }
     }
 
-    public Map<String, Integer> getFrequencies(String text){
+    Map<String, Integer> getFrequencies(String text){
         String lowerCase = text.toLowerCase();
         char[] array = lowerCase.toCharArray();
         Map<String, Integer> frequencies = new HashMap<>();
@@ -198,7 +197,7 @@ public class WordDetectionAutomaton {
         return frequencies;
     }
 
-    public State getInitialState() {
+    State getInitialState() {
         return initialState;
     }
 

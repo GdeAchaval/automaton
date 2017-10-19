@@ -6,9 +6,9 @@ import java.io.*;
  * @author Agustin Bettati
  * @version 1.0
  */
-public class FileManager {
+class FileManager {
 
-    public void writeToTextFile(String fileName,String content) {
+    void writeToTextFile(String fileName, String content) {
         try {
             FileWriter fileWriter = new FileWriter(fileName);
             fileWriter.write(content);
@@ -19,20 +19,16 @@ public class FileManager {
         }
     }
 
-    public File[] getHtmlFilesInDirectory(){
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".html");
-            }
-        };
+    File[] getHtmlFilesInDirectory(){
+        FilenameFilter filter = (dir, name) -> name.endsWith(".html");
 
         String pathName = System.getProperty("user.dir");
         File folder = new File(pathName);
         return folder.listFiles(filter);
     }
 
-    public String getContentOfFile(File file) throws IOException {
-        String content = "";
+    String getContentOfFile(File file) throws IOException {
+        StringBuilder content = new StringBuilder();
 
         FileReader fileReader = new FileReader(file);
 
@@ -40,11 +36,11 @@ public class FileManager {
 
         String line = bufferedReader.readLine();
         while (line!= null) {
-            content += line + "\n";
+            content.append(line).append("\n");
             line  = bufferedReader.readLine();
         }
         fileReader.close();
 
-        return content;
+        return content.toString();
     }
 }
