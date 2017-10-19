@@ -28,6 +28,10 @@ class WordDetectionAutomaton {
         int name = 1;
         List<State> newWordState = new ArrayList<>(); //Son estados que se llego solo con un esp.
 
+        State htmlTag = new State("tag");
+        htmlTag.addNewTransition('>', initialState);
+        initialState.addNewTransition('<', htmlTag);
+
         for (String phrase : phrases) {
             //program is case insensitive
             String lowerCase = phrase.toLowerCase();
@@ -183,7 +187,9 @@ class WordDetectionAutomaton {
                 currentState = listOfStates.get(0);
             }
             else {
-                currentState = initialState;
+                if(!currentState.getName().equals("tag")) {
+                    currentState = initialState;
+                }
             }
 
             if(currentState.isEndingState()){
