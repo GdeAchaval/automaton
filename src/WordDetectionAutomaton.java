@@ -12,7 +12,7 @@ public class WordDetectionAutomaton {
     private List<String> phrases;
 
     public WordDetectionAutomaton(List<String> phrases){
-        initialState = new State("0");
+        initialState = new State("_0");
         currentState = initialState;
         this.phrases = phrases;
         generateAutomaton(phrases);
@@ -36,14 +36,14 @@ public class WordDetectionAutomaton {
 
             State aux = initialState;
             for (int i = 0; i <= characters.length -2; i++) {
-                State newState = new State(name + "");
+                State newState = new State("_"+name );
                 name++;
                 aux.addNewTransition(characters[i], newState);
                 if(characters[i] == ' ')
                     newWordState.add(newState);
                 aux = newState;
             }
-            State finalState = new State(name+"", phrase);
+            State finalState = new State("_"+name, phrase);
             name++;
             aux.addNewTransition(characters[characters.length - 1], finalState);
         }
@@ -60,7 +60,7 @@ public class WordDetectionAutomaton {
     }
 
     public WordDetectionAutomaton createDeterministic(){
-        State determinState = new State("0");
+        State determinState = new State("_0");
 
         State nonDeterminState = initialState;
         makeDeterministic(determinState, Arrays.asList(nonDeterminState), determinState);
@@ -116,25 +116,25 @@ public class WordDetectionAutomaton {
         for (State state : states) {
             allNumbers += state.getName();
         }
-        char[] nonDetStates = allNumbers.toCharArray();
-        final List<State> determinStates = new ArrayList<>();
-        determinStates.add(determinInit);
-        getAllStates(determinStates);
+        String[] nonDetStates = allNumbers.split("_");
 
-        for (State determinState : determinStates) {
+        final List<State> allDeterminStates = new ArrayList<>();
+        allDeterminStates.add(determinInit);
+        getAllStates(allDeterminStates);
+
+        for (State determinState : allDeterminStates) {
             String nameOfPosibleState = determinState.getName();
-            if(nonDetStates.length == nameOfPosibleState.length()){
-                boolean statesArePresent = true;
-                for (char nonDetState : nonDetStates) {
-                    if(nameOfPosibleState.indexOf(nonDetState) == -1)
-                        statesArePresent = false;
-                }
+            String[] determinCombinedState = nameOfPosibleState.split("_");
 
-                if(statesArePresent) return determinState;
+            HashSet<String> set1 = new HashSet<String>(Arrays.asList(nonDetStates));
+            HashSet<String> set2 = new HashSet<String>(Arrays.asList(determinCombinedState));
+            if(set1.equals(set2)){
+                return determinState;
             }
         }
         return null;
     }
+
     private void getAllStates(List<State> allStates) {
         for(int i=0; i<allStates.size(); i++) {
             State from = allStates.get(i);
