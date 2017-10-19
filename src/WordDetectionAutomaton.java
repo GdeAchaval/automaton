@@ -26,6 +26,8 @@ public class WordDetectionAutomaton {
 
     private void generateAutomaton(List<String> phrases) {
         int name = 1;
+        List<State> newWordState = new ArrayList<>(); //Son estados que se llego solo con un esp.
+
         for (String phrase : phrases) {
             //program is case insensitive
             String lowerCase = phrase.toLowerCase();
@@ -37,12 +39,23 @@ public class WordDetectionAutomaton {
                 State newState = new State(name + "");
                 name++;
                 aux.addNewTransition(characters[i], newState);
+                if(characters[i] == ' ')
+                    newWordState.add(newState);
                 aux = newState;
             }
             State finalState = new State(name+"", phrase);
             name++;
             aux.addNewTransition(characters[characters.length - 1], finalState);
+        }
 
+        for (State stateThatGoesToNewWord : newWordState) {
+            final Map<Character, List<State>> initTrans = initialState.getTransitions();
+            for (Map.Entry<Character, List<State>> transition : initTrans.entrySet()){
+                char character = transition.getKey();
+                for (State state : transition.getValue()) {
+                    stateThatGoesToNewWord.addNewTransition(character, state);
+                }
+            }
         }
     }
 
@@ -50,12 +63,12 @@ public class WordDetectionAutomaton {
         State determinState = new State("0");
 
         State nonDeterminState = initialState;
-        makeDeterministic(determinState, Arrays.asList(nonDeterminState));
+        makeDeterministic(determinState, Arrays.asList(nonDeterminState), determinState);
 
         return new WordDetectionAutomaton(determinState, phrases);
     }
 
-    private void makeDeterministic(State determinState, List<State> nonDeterminStates) {
+    private void makeDeterministic(State determinState, List<State> nonDeterminStates, State determinInit) {
         Map<Character, List<State>> determinTransitions = new HashMap<>();
         Map<Character, String> nameOfNewStates = new HashMap<>();
 
@@ -81,17 +94,72 @@ public class WordDetectionAutomaton {
         }
 
         for (Map.Entry<Character, List<State>> transitions : determinTransitions.entrySet()) {
-            State newState = new State(nameOfNewStates.get(transitions.getKey()));
-            determinState.addNewTransition(transitions.getKey(), newState);
-            makeDeterministic(newState, transitions.getValue());
+            char character = transitions.getKey();
+            List<State> states = transitions.getValue();
+
+            State combinedState = findCombinedState(determinInit, states);
+            if(combinedState != null){
+                determinState.addNewTransition(transitions.getKey(), combinedState);
+            }
+            else {
+                State newState = new State(nameOfNewStates.get(transitions.getKey()));
+                determinState.addNewTransition(transitions.getKey(), newState);
+                makeDeterministic(newState, transitions.getValue(), determinInit);
+            }
 
         }
 
     }
 
+    private State findCombinedState(State determinInit, List<State> states) {
+        String allNumbers = "";
+        for (State state : states) {
+            allNumbers += state.getName();
+        }
+        char[] nonDetStates = allNumbers.toCharArray();
+        final List<State> determinStates = new ArrayList<>();
+        determinStates.add(determinInit);
+        getAllStates(determinStates);
+
+        for (State determinState : determinStates) {
+            String nameOfPosibleState = determinState.getName();
+            if(nonDetStates.length == nameOfPosibleState.length()){
+                boolean statesArePresent = true;
+                for (char nonDetState : nonDetStates) {
+                    if(nameOfPosibleState.indexOf(nonDetState) == -1)
+                        statesArePresent = false;
+                }
+
+                if(statesArePresent) return determinState;
+            }
+        }
+        return null;
+    }
+    private void getAllStates(List<State> allStates) {
+        for(int i=0; i<allStates.size(); i++) {
+            State from = allStates.get(i);
+            Iterator<List<State>> states = from.getTransitions().values().iterator();
+            states.forEachRemaining(statesList -> {
+                for (State aState : statesList) {
+                    if (!allStates.contains(aState)) {
+                        allStates.add(aState);
+                    }
+                }
+            });
+//            while(states.hasNext()){
+//                List<State> statesList = states.next();
+//                for (State aState : statesList) {
+//                    if (!allStates.contains(aState)) {
+//                        allStates.add(aState);
+//                    }
+//                }
+//            }
+        }
+    }
+
     private void addToMap(char character, String name, Map<Character, String> map) {
         if(map.containsKey(character)){
-            map.put(character,map.get(character) +" " + name);
+            map.put(character,map.get(character) + name);
         }
         else{
             map.put(character,name);
@@ -117,7 +185,6 @@ public class WordDetectionAutomaton {
             frequencies.put(phrase, 0);
         }
 
-        char prevChar = 'a';
         for (char character : array) {
             if(currentState.hasTransition(character)){
                 List<State> listOfStates= currentState.getTransitionStates(character);
@@ -126,13 +193,6 @@ public class WordDetectionAutomaton {
             }
             else {
                 currentState = initialState;
-                if(prevChar == ' '){
-                    if(currentState.hasTransition(character)){
-                        List<State> listOfStates= currentState.getTransitionStates(character);
-                        //asumo que estoy llamando al metodo en un determinista
-                        currentState = listOfStates.get(0);
-                    }
-                }
             }
 
             if(currentState.isEndingState()){
@@ -140,15 +200,13 @@ public class WordDetectionAutomaton {
                 frequencies.put(word,frequencies.get(word) + 1);
                 // TODO discutir si aca se vuelve a q0 de una
             }
-
-            prevChar = character;
         }
 
         return frequencies;
     }
 
-
-
-
+    public State getInitialState() {
+        return initialState;
+    }
 
 }

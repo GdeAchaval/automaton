@@ -10,10 +10,10 @@ public class SimpleTest {
 
     public static void main(String[] args) {
 
-        List<String> sentences = Arrays.asList("hola", "hola mundo", "mundo");
+        List<String> sentences = Arrays.asList("ho la", "ho");
         WordDetectionAutomaton nonDet = new WordDetectionAutomaton(sentences);
         WordDetectionAutomaton det = nonDet.createDeterministic();
-        final Map<String, Integer> frequencies = det.getFrequencies("hola hola mundo mundo");
+        final Map<String, Integer> frequencies = det.getFrequencies("ho ho la la");
 
     }
 }
