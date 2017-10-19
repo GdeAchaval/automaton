@@ -75,8 +75,8 @@ public class WordDetectionAutomaton {
         for (State nonDeterminState : nonDeterminStates) {
             //Si ya es el ultimo
             if(nonDeterminState.isEndingState()){
-                String endWord = nonDeterminState.getEndingWord();
-                determinState.convertToEndingState(endWord);
+                List<String> endingWords = nonDeterminState.getEndingWords();
+                determinState.addEndingWords(endingWords);
             }
             else{
                 Map<Character, List<State>> trans = nonDeterminState.getTransitions();
@@ -146,14 +146,6 @@ public class WordDetectionAutomaton {
                     }
                 }
             });
-//            while(states.hasNext()){
-//                List<State> statesList = states.next();
-//                for (State aState : statesList) {
-//                    if (!allStates.contains(aState)) {
-//                        allStates.add(aState);
-//                    }
-//                }
-//            }
         }
     }
 
@@ -196,9 +188,10 @@ public class WordDetectionAutomaton {
             }
 
             if(currentState.isEndingState()){
-                String word = currentState.getEndingWord();
-                frequencies.put(word,frequencies.get(word) + 1);
-                // TODO discutir si aca se vuelve a q0 de una
+                List<String> words = currentState.getEndingWords();
+                for (String word : words) {
+                    frequencies.put(word,frequencies.get(word) + 1);
+                }
             }
         }
 

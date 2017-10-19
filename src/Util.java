@@ -19,7 +19,7 @@ public class Util {
         }
     }
 
-    private static void generateDot(String filename, State initialState) throws IOException {
+    public static void generateDot(String filename, State initialState) throws IOException {
 
         ArrayList<State> allStates = new ArrayList<>();
         allStates.add(initialState);
@@ -92,7 +92,7 @@ public class Util {
         createPNGfromDOT("src/files/testDet.dot");
     }
 
-    private static void createPNGfromDOT(String name) throws IOException {
+    public static void createPNGfromDOT(String name) throws IOException {
         File f = new File(name);
         String arg1 = f.getAbsolutePath();
         String arg2 = arg1.substring(0, arg1.length()-4) + ".png"; //delete .dot, add.png
