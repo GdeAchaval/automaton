@@ -1,0 +1,38 @@
+digraph {
+rankdir = "LR";
+// NODES
+node [shape=circle] Node_0[label="0"];
+node [shape=circle] Node_1_16[label="1 16"];
+node [shape=circle] Node_11[label="11"];
+node [shape=circle] Node_2_17[label="2 17"];
+node [shape=circle] Node_12[label="12"];
+node [shape=circle] Node_3_18[label="3 18"];
+node [shape=circle] Node_13[label="13"];
+node [shape=doublecircle] Node_4_19[label="4 19"];
+node [shape=circle] Node_14[label="14"];
+node [shape=circle] Node_5[label="5"];
+node [shape=doublecircle] Node_15[label="15"];
+node [shape=circle] Node_6_11[label="6 11"];
+node [shape=circle] Node_7_12[label="7 12"];
+node [shape=circle] Node_8_13[label="8 13"];
+node [shape=circle] Node_9_14[label="9 14"];
+node [shape=doublecircle] Node_10_15[label="10 15"];
+
+// TRANSITIONS
+Node_0 -> Node_1_16 [label="h"];
+Node_0 -> Node_11 [label="m"];
+Node_1_16 -> Node_2_17 [label="o"];
+Node_11 -> Node_12 [label="u"];
+Node_2_17 -> Node_3_18 [label="l"];
+Node_12 -> Node_13 [label="n"];
+Node_3_18 -> Node_4_19 [label="a"];
+Node_13 -> Node_14 [label="d"];
+Node_4_19 -> Node_5 [label=" "];
+Node_14 -> Node_15 [label="o"];
+Node_5 -> Node_1_16 [label="h"];
+Node_5 -> Node_6_11 [label="m"];
+Node_6_11 -> Node_7_12 [label="u"];
+Node_7_12 -> Node_8_13 [label="n"];
+Node_8_13 -> Node_9_14 [label="d"];
+Node_9_14 -> Node_10_15 [label="o"];
+}
