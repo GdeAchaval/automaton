@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/automaton.iml" filepath="$PROJECT_DIR$/automaton.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Word-Detection-Automaton.iml" filepath="$PROJECT_DIR$/Word-Detection-Automaton.iml" />
     </modules>
   </component>
 </project>
