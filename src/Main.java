@@ -11,9 +11,16 @@ import java.util.Map;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-        List<String> phrases = Arrays.asList("ho la", "hola mundo", "jorge");
-        WordDetectionAutomaton automaton = new WordDetectionAutomaton(phrases);
-        WordDetectionAutomaton deterministic = automaton.createDeterministic();
+        List<String> phrases = Arrays.asList("hola mundo", "mundo", "hola");
+        //TODO falta que busque las phrases en un search.txt
+        WordDetectionAutomaton nonDet = new WordDetectionAutomaton(phrases);
+        WordDetectionAutomaton deterministic = nonDet.createDeterministic();
+
+        Util.generateDot("noDeterminante.dot", nonDet.getInitialState());
+        Util.generateDot("determinante.dot",deterministic.getInitialState());
+        Util.createPNGfromDOT("noDeterminante.dot");
+        Util.createPNGfromDOT("determinante.dot");
+
 
         FileManager fm = new FileManager();
         File[] files = fm.getHtmlFilesInDirectory();

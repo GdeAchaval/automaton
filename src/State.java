@@ -13,29 +13,30 @@ public class State {
 
     private String name;
     private Map<Character, List<State>> transitions;
-    private String wordOfEndingState;
+    private List<String> wordsOfEndingState;
 
     
     State(String name) {
         this.name = name;
         this.transitions = new HashMap<>();
-        wordOfEndingState = null;
+        wordsOfEndingState = new ArrayList<>();
     }
 
     State(String name, String wordOfEndingState) {
         this.name = name;
-        this.wordOfEndingState = wordOfEndingState;
+        wordsOfEndingState = new ArrayList<>();
+        wordsOfEndingState.add(wordOfEndingState);
         this.transitions = new HashMap<>();
     }
 
     boolean isEndingState(){
-        return wordOfEndingState != null;
+        return !wordsOfEndingState.isEmpty();
     }
 
-    void convertToEndingState(String endingWord){
-        wordOfEndingState = endingWord;
-    }
 
+    void addEndingWords(List<String> endingWords) {
+        wordsOfEndingState.addAll(endingWords);
+    }
     void addNewTransition(char character, State nextState){
         if(transitions.containsKey(character)){
             transitions.get(character).add(nextState);
@@ -47,11 +48,11 @@ public class State {
         }
     }
 
-    public boolean hasTransition(char character){
+    boolean hasTransition(char character){
         return transitions.containsKey(character);
     }
 
-    public List<State> getTransitionStates(char character){
+    List<State> getTransitionStates(char character){
         return transitions.get(character);
     }
 
@@ -63,21 +64,24 @@ public class State {
         return name;
     }
     
-    String getEndingWord(){
-        return wordOfEndingState;
+    List<String> getEndingWords(){
+        return wordsOfEndingState;
     }
 
     public String toString(){
-        if(wordOfEndingState != null){
-            return "-"+name+"- End state " + wordOfEndingState;
+        StringBuilder endingState = new StringBuilder();
+        for (String word : wordsOfEndingState) {
+            endingState.append(word).append(" ");
+        }
+        if(!wordsOfEndingState.isEmpty()){
+            return "-"+name+"- End state " + endingState;
         }
         else{
-            String result = "";
+            StringBuilder result = new StringBuilder();
             for (Character character : transitions.keySet()) {
-                result += character + " ";
+                result.append(character).append(" ");
             }
             return "-"+name+"- Moves with " + result;
         }
     }
-
 }
