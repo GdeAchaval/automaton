@@ -42,7 +42,6 @@ Node_4 -> Node_5 [label=" "];
 Node_14 -> Node_15 [label="o"];
 Node_5 -> Node_1 [label="h"];
 Node_5 -> Node_16 [label="h"];
-Node_5 -> Nodetag [label="<"];
 Node_5 -> Node_6 [label="m"];
 Node_5 -> Node_11 [label="m"];
 Node_6 -> Node_7 [label="u"];

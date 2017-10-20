@@ -56,8 +56,10 @@ class WordDetectionAutomaton {
             final Map<Character, List<State>> initTrans = initialState.getTransitions();
             for (Map.Entry<Character, List<State>> transition : initTrans.entrySet()){
                 char character = transition.getKey();
-                for (State state : transition.getValue()) {
-                    stateThatGoesToNewWord.addNewTransition(character, state);
+                if(character != '<') {
+                    for (State state : transition.getValue()) {
+                        stateThatGoesToNewWord.addNewTransition(character, state);
+                    }
                 }
             }
         }
@@ -65,6 +67,9 @@ class WordDetectionAutomaton {
 
     WordDetectionAutomaton createDeterministic(){
         State determinState = new State("_0");
+//        State htmlTag = new State("tag");
+//        htmlTag.addNewTransition('>', initialState);
+//        determinState.addNewTransition('<', htmlTag);
 
         State nonDeterminState = initialState;
         makeDeterministic(determinState, Collections.singletonList(nonDeterminState), determinState);
@@ -98,17 +103,18 @@ class WordDetectionAutomaton {
         }
 
         for (Map.Entry<Character, List<State>> transitions : determinTransitions.entrySet()) {
+
             List<State> states = transitions.getValue();
 
             State combinedState = findCombinedState(determinInit, states);
-            if(combinedState != null){
+            if (combinedState != null) {
                 determinState.addNewTransition(transitions.getKey(), combinedState);
-            }
-            else {
+            } else {
                 State newState = new State(nameOfNewStates.get(transitions.getKey()));
                 determinState.addNewTransition(transitions.getKey(), newState);
                 makeDeterministic(newState, transitions.getValue(), determinInit);
             }
+
 
         }
 
@@ -187,6 +193,9 @@ class WordDetectionAutomaton {
                 currentState = listOfStates.get(0);
             }
             else {
+                if(character == '<'){
+                    currentState = initialState.getTransitionStates('<').get(0);
+                }
                 if(!currentState.getName().equals("tag")) {
                     currentState = initialState;
                 }

@@ -33,7 +33,6 @@ Node_13 -> Node_14 [label="d"];
 Node_4_19 -> Node_5 [label=" "];
 Node_14 -> Node_15 [label="o"];
 Node_5 -> Node_1_16 [label="h"];
-Node_5 -> Nodetag [label="<"];
 Node_5 -> Node_6_11 [label="m"];
 Node_6_11 -> Node_7_12 [label="u"];
 Node_7_12 -> Node_8_13 [label="n"];
