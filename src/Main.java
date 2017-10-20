@@ -1,8 +1,7 @@
+import dictionary.DictionaryUtil;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Agustin Bettati
@@ -44,6 +43,7 @@ public class Main {
     }
 
     private static List<String> readSearch(String[] args) throws IOException {
+        DictionaryUtil dictionaryUtil = new DictionaryUtil();
         List<String> wordsToRead = new ArrayList<>();
         String directory;
         String name;
@@ -58,10 +58,17 @@ public class Main {
         File file = new File(fullPath);
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
-        String word;
-        while((word = br.readLine()) != null) {
-            if(!wordsToRead.contains(word)){
-                wordsToRead.add(word);
+        String phrase;
+        String[] words;
+        while((phrase = br.readLine()) != null) {
+            phrase = phrase.toLowerCase();
+            words = phrase.split("[^a-zA-Z]");
+            for (String word : words) {
+                if(!wordsToRead.contains(word) && !word.equals("")) {
+                    if(dictionaryUtil.checkIfWordExists(word)) {
+                        wordsToRead.add(word);
+                    }
+                }
             }
         }
         return wordsToRead;

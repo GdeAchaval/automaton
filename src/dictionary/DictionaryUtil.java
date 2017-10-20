@@ -9,7 +9,7 @@ public class DictionaryUtil {
 
     private RWayTrieMap trieMap;
 
-    private DictionaryUtil() throws IOException {
+    public DictionaryUtil() throws IOException {
         this.trieMap = buildTrie();
     }
 
@@ -26,7 +26,7 @@ public class DictionaryUtil {
         return trieMap;
     }
 
-    private boolean checkIfWordExists(String word) {
+    public boolean checkIfWordExists(String word) {
         return trieMap.containsKey(word);
     }
 }
