@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * @author Gonzalo de Achaval
  */
-public class Util {
+class Util {
 
     private enum Shapes {
         CIRCLE("circle"), DOUBLECIRCLE("doublecircle");
@@ -81,17 +81,6 @@ public class Util {
     private static void writeTransition(FileWriter fw, State state, State toState, Character character) throws IOException {
         fw.write("Node" + state.getName() + " -> " + "Node" + toState.getName());
         fw.write(" [label=\"" + character + "\"];\n");
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        List<String> phrases = Arrays.asList("ho la", "hola mundo", "jorge");
-        WordDetectionAutomaton automaton = new WordDetectionAutomaton(phrases);
-        WordDetectionAutomaton deterministic = automaton.createDeterministic();
-        generateDot("src/files/testNonDet.dot", automaton.getInitialState());
-        generateDot("src/files/testDet.dot", deterministic.getInitialState());
-        createPNGfromDOT("src/files/testNonDet.dot");
-        createPNGfromDOT("src/files/testDet.dot");
     }
 
     static void createPNGfromDOT(String name) throws IOException {
