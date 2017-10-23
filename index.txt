@@ -7,10 +7,12 @@ Frequency: 1
 Sentence: mundo
 
 File name: test.html
-Frequency: 1
+Frequency: 2
 
 
 Sentence: hola
 
+File name: test.html
+Frequency: 1
 
 
