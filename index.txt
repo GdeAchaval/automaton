@@ -1,12 +1,18 @@
-Sentence: hello
+Sentence: hola
+
+File name: test.html
+Frequency: 2
 
 
+Sentence: hola mundo
 
-Sentence: world
+File name: test.html
+Frequency: 1
 
 
+Sentence: mundo
 
-Sentence: dog
-
+File name: test.html
+Frequency: 2
 
 

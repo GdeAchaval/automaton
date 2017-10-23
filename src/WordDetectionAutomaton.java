@@ -12,7 +12,7 @@ class WordDetectionAutomaton {
     private List<String> phrases;
 
     WordDetectionAutomaton(List<String> phrases){
-        initialState = new State("_0");
+        initialState = State.createInitState();
         currentState = initialState;
         this.phrases = phrases;
         generateAutomaton(phrases);
@@ -28,8 +28,7 @@ class WordDetectionAutomaton {
         int name = 1;
         List<State> newWordState = new ArrayList<>(); //Son estados que se llego solo con un esp.
 
-        State htmlTag = new State("tag");
-        htmlTag.addNewTransition('>', initialState);
+        State htmlTag = State.createHtmlTagState(initialState);
         initialState.addNewTransition('<', htmlTag);
 
         for (String phrase : phrases) {
@@ -40,14 +39,16 @@ class WordDetectionAutomaton {
 
             State aux = initialState;
             for (int i = 0; i <= characters.length -2; i++) {
-                State newState = new State("_"+name );
+                State newState = State.createNormalState("_"+name,initialState, htmlTag);
                 name++;
                 aux.addNewTransition(characters[i], newState);
                 if(characters[i] == ' ')
                     newWordState.add(newState);
                 aux = newState;
             }
-            State finalState = new State("_"+name, phrase);
+
+            State finalState = State.createEndingState("_"+name, phrase,initialState,htmlTag);
+
             name++;
             aux.addNewTransition(characters[characters.length - 1], finalState);
         }
@@ -66,19 +67,25 @@ class WordDetectionAutomaton {
     }
 
     WordDetectionAutomaton createDeterministic(){
-        State determinState = new State("_0");
-//        State htmlTag = new State("tag");
-//        htmlTag.addNewTransition('>', initialState);
-//        determinState.addNewTransition('<', htmlTag);
+        State determinState = State.createInitState();
+        State htmlTag = State.createHtmlTagState(determinState);
+        determinState.addNewTransition('<', htmlTag);
 
         State nonDeterminState = initialState;
-        makeDeterministic(determinState, Collections.singletonList(nonDeterminState), determinState);
+        makeDeterministic(determinState, Collections.singletonList(nonDeterminState), determinState, htmlTag);
 
         return new WordDetectionAutomaton(determinState, phrases);
     }
 
-    private void makeDeterministic(State determinState, List<State> nonDeterminStates, State determinInit) {
+    /*
+    Este metodo recursivo convierte una lista de estados no deterministas en un solo
+    estado determinista que contiene todas sus transiciones y posibles ending words.
+     */
+    private void makeDeterministic(State determinState, List<State> nonDeterminStates, State determinInit,State htmlState) {
         Map<Character, List<State>> determinTransitions = new HashMap<>();
+        /*
+            determinTransition es un mapa que va a contener para cada char todas sus transiciones
+         */
         Map<Character, String> nameOfNewStates = new HashMap<>();
 
         for (State nonDeterminState : nonDeterminStates) {
@@ -92,27 +99,31 @@ class WordDetectionAutomaton {
                 for (Map.Entry<Character, List<State>> transition : trans.entrySet()){
                     char character = transition.getKey();
                     for (State state : transition.getValue()) {
-                        //agregar a determin refs los states para el char
                         addToMap(character,state, determinTransitions);
                         addToMap(character, state.getName(), nameOfNewStates);
                     }
                 }
-                //para cada char creo nuevo estado, le pongo la ref y llamo al metodo recursivo
             }
 
         }
 
         for (Map.Entry<Character, List<State>> transitions : determinTransitions.entrySet()) {
+            /* Cuando el char es '<', se sabe que  el determinState va al html tag por default,
+               por lo cual no se realiza ningun cambio.
+            */
+            if(! (transitions.getKey() == '<')){
 
-            List<State> states = transitions.getValue();
+                List<State> states = transitions.getValue();
 
-            State combinedState = findCombinedState(determinInit, states);
-            if (combinedState != null) {
-                determinState.addNewTransition(transitions.getKey(), combinedState);
-            } else {
-                State newState = new State(nameOfNewStates.get(transitions.getKey()));
-                determinState.addNewTransition(transitions.getKey(), newState);
-                makeDeterministic(newState, transitions.getValue(), determinInit);
+                State combinedState = findCombinedState(determinInit, states);
+                if (combinedState != null) {
+                    determinState.addNewTransition(transitions.getKey(), combinedState);
+                } else {
+                    String nameOfNewState = nameOfNewStates.get(transitions.getKey());
+                    State newState = State.createNormalState(nameOfNewState, initialState, htmlState);
+                    determinState.addNewTransition(transitions.getKey(), newState);
+                    makeDeterministic(newState, states, determinInit, htmlState);
+                }
             }
 
 
@@ -178,7 +189,11 @@ class WordDetectionAutomaton {
         }
     }
 
+    /*
+    Esto metodo se llama una vez que el automata es transformado a determinista.
+     */
     Map<String, Integer> getFrequencies(String text){
+
         String lowerCase = text.toLowerCase();
         char[] array = lowerCase.toCharArray();
         Map<String, Integer> frequencies = new HashMap<>();
@@ -186,20 +201,12 @@ class WordDetectionAutomaton {
             frequencies.put(phrase, 0);
         }
 
+        currentState = initialState;
         for (char character : array) {
-            if(currentState.hasTransition(character)){
-                List<State> listOfStates= currentState.getTransitionStates(character);
-                //asumo que estoy llamando al metodo en un determinista
-                currentState = listOfStates.get(0);
-            }
-            else {
-                if(character == '<'){
-                    currentState = initialState.getTransitionStates('<').get(0);
-                }
-                if(!currentState.getName().equals("tag")) {
-                    currentState = initialState;
-                }
-            }
+
+            List<State> listOfStates= currentState.getTransitionStates(character);
+            //asumo que estoy llamando al metodo con un automata determinista
+            currentState = listOfStates.get(0);
 
             if(currentState.isEndingState()){
                 List<String> words = currentState.getEndingWords();

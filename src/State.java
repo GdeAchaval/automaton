@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Gonzalo De Achaval
@@ -14,19 +11,48 @@ public class State {
     private String name;
     private Map<Character, List<State>> transitions;
     private List<String> wordsOfEndingState;
+    private State defaultTransition;
 
     
-    State(String name) {
+    private State(String name) {
         this.name = name;
         this.transitions = new HashMap<>();
         wordsOfEndingState = new ArrayList<>();
     }
 
-    State(String name, String wordOfEndingState) {
+    private State(String name, String wordOfEndingState) {
         this.name = name;
         wordsOfEndingState = new ArrayList<>();
         wordsOfEndingState.add(wordOfEndingState);
         this.transitions = new HashMap<>();
+    }
+
+    public static State createInitState(){
+        State result = new State("_0");
+        result.defaultTransition = result;
+        return result;
+    }
+
+    public static State createHtmlTagState(State initState){
+        State result = new State("tag");
+        result.defaultTransition = result;
+        result.addNewTransition('>', initState);
+        return result;
+    }
+
+
+    public static State createNormalState(String name,State initState,State tagState){
+        State result = new State(name);
+        result.defaultTransition = initState;
+        result.addNewTransition('<', tagState);
+        return result;
+    }
+
+    public static State createEndingState(String name,String endingWord,State initState,State tagState){
+        State result = new State(name, endingWord);
+        result.defaultTransition = initState;
+        result.addNewTransition('<', tagState);
+        return result;
     }
 
     boolean isEndingState(){
@@ -48,11 +74,13 @@ public class State {
         }
     }
 
-    boolean hasTransition(char character){
-        return transitions.containsKey(character);
-    }
 
     List<State> getTransitionStates(char character){
+        // Si no tiene una transicion, devuelve el default
+        if(!transitions.containsKey(character)){
+            return Arrays.asList(defaultTransition);
+        }
+
         return transitions.get(character);
     }
 
