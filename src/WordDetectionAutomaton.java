@@ -120,7 +120,7 @@ class WordDetectionAutomaton {
                     determinState.addNewTransition(transitions.getKey(), combinedState);
                 } else {
                     String nameOfNewState = nameOfNewStates.get(transitions.getKey());
-                    State newState = State.createNormalState(nameOfNewState, initialState, htmlState);
+                    State newState = State.createNormalState(nameOfNewState, determinInit, htmlState);
                     determinState.addNewTransition(transitions.getKey(), newState);
                     makeDeterministic(newState, states, determinInit, htmlState);
                 }
@@ -202,15 +202,21 @@ class WordDetectionAutomaton {
         }
 
         currentState = initialState;
-        for (char character : array) {
 
+        int i = 0;
+
+        while(i < array.length){
+            char character = array[i];
             List<State> listOfStates= currentState.getTransitionStates(character);
             //asumo que estoy llamando al metodo con un automata determinista
             currentState = listOfStates.get(0);
 
-            if(currentState.isEndingState()){
-                List<String> words = currentState.getEndingWords();
-                for (String word : words) {
+            List<String> endingWords = currentState.getEndingWords();
+
+            //Si es un estado de aceptacion, y termina la palabra se agrega su frequency
+            i++;
+            if(i == array.length || array[i] == ' ' || (!Character.isDigit(array[i]) && !Character.isLetter(array[i])) ){
+                for (String word : endingWords) {
                     frequencies.put(word,frequencies.get(word) + 1);
                 }
             }
