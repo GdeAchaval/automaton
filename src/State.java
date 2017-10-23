@@ -27,28 +27,28 @@ public class State {
         this.transitions = new HashMap<>();
     }
 
-    public static State createInitState(){
+    static State createInitState(){
         State result = new State("_0");
         result.defaultTransition = result;
         return result;
     }
 
-    public static State createHtmlTagState(State initState){
-        State result = new State("tag");
+    static State createHtmlTagState(State initState){
+        State result = new State("_tag");
         result.defaultTransition = result;
         result.addNewTransition('>', initState);
         return result;
     }
 
 
-    public static State createNormalState(String name,State initState,State tagState){
+    static State createNormalState(String name, State initState, State tagState){
         State result = new State(name);
         result.defaultTransition = initState;
         result.addNewTransition('<', tagState);
         return result;
     }
 
-    public static State createEndingState(String name,String endingWord,State initState,State tagState){
+    static State createEndingState(String name, String endingWord, State initState, State tagState){
         State result = new State(name, endingWord);
         result.defaultTransition = initState;
         result.addNewTransition('<', tagState);
@@ -78,7 +78,7 @@ public class State {
     List<State> getTransitionStates(char character){
         // Si no tiene una transicion, devuelve el default
         if(!transitions.containsKey(character)){
-            return Arrays.asList(defaultTransition);
+            return Collections.singletonList(defaultTransition);
         }
 
         return transitions.get(character);
