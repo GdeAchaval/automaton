@@ -44,7 +44,7 @@ public class Main {
 
     private static List<String> readSearch(String[] args) throws IOException {
         DictionaryUtil dictionaryUtil = new DictionaryUtil();
-        List<String> wordsToRead = new ArrayList<>();
+        List<String> phrasesToRead = new ArrayList<>();
         String directory;
         String name;
         String fullPath;
@@ -63,14 +63,17 @@ public class Main {
         while((phrase = br.readLine()) != null) {
             phrase = phrase.toLowerCase();
             words = phrase.split("[^a-zA-Z]");
+            boolean phraseOK = true;
             for (String word : words) {
-                if(!wordsToRead.contains(word) && !word.equals("")) {
-                    if(dictionaryUtil.checkIfWordExists(word)) {
-                        wordsToRead.add(word);
-                    }
+                if(!dictionaryUtil.checkIfWordExists(word)) {
+                    phraseOK = false;
+                    break;
                 }
             }
+            if(!phrasesToRead.contains(phrase) && !phrase.equals("") && phraseOK) {
+                phrasesToRead.add(phrase);
+            }
         }
-        return wordsToRead;
+        return phrasesToRead;
     }
 }
