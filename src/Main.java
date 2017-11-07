@@ -1,7 +1,8 @@
-import dictionary.DictionaryUtil;
-
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Agustin Bettati
@@ -11,7 +12,6 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         List<String> phrases = readSearch(args);
-      //  List<String> phrases = Arrays.asList("hola mundo","mundo","hola" );
         WordDetectionAutomaton nonDet = new WordDetectionAutomaton(phrases);
         WordDetectionAutomaton deterministic = nonDet.createDeterministic();
 
@@ -22,34 +22,52 @@ public class Main {
 
 
         FileManager fm = new FileManager();
-        File[] files = fm.getHtmlFilesInDirectory();
+        File[] files = fm.getHtmlFilesInDirectory(args[0]);
 
-        StringBuilder contentOfFile = new StringBuilder();
-        for (String phrase : phrases) {
-            contentOfFile.append("Sentence: ").append(phrase).append("\n\n");
-            for (File file : files) {
-                String content = fm.getContentOfFile(file);
-                final Map<String, Integer> frequencies = deterministic.getFrequencies(content);
+        final Map<String, List<Couple>> frequencies = new HashMap<>();
 
-                if(frequencies.get(phrase) > 0){
-                    contentOfFile.append("File name: ").append(file.getName()).append("\n");
-                    contentOfFile.append("Frequency: ").append(frequencies.get(phrase)).append("\n");
-                }
+        for (File file : files) {
+
+            final String fileName = file.getName();
+            String content = fm.getContentOfFile(file);
+            final Map<String, Integer> freq = deterministic.getFrequencies(content);
+            List<Couple> couples = new ArrayList<>();
+
+            for(Map.Entry<String, Integer> element : freq.entrySet()){
+                final Couple e = new Couple(element.getKey(), element.getValue());
+                couples.add(e);
             }
-            contentOfFile.append("\n\n");
+            frequencies.put(fileName, couples);
         }
 
-        fm.writeToTextFile("index.txt", contentOfFile.toString());
+        FileWriter fw = new FileWriter("index.txt");
+        for (String phrase : phrases) {
+
+            fw.write("Phrase: "+phrase+ "\n");
+
+            for(Map.Entry<String, List<Couple>> element : frequencies.entrySet()){
+                String nameOfFile = element.getKey();
+                final List<Couple> listOfCouples = element.getValue();
+                for (Couple couple : listOfCouples) {
+                    if(couple.getPhrase().equals(phrase)){
+                        if(couple.getFrequency() != 0) {
+                            fw.write("\t" + nameOfFile + " -> " + couple.getFrequency() + "\n");
+                        }
+                    }
+                }
+            }
+            fw.write("\n");
+        }
+        fw.close();
     }
 
     private static List<String> readSearch(String[] args) throws IOException {
-        DictionaryUtil dictionaryUtil = new DictionaryUtil();
         List<String> phrasesToRead = new ArrayList<>();
         String directory;
         String name;
         String fullPath;
         try {
-            directory = args[0];
+            directory = System.getProperty("user.dir");
             name = args[1];
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("You must run the program with two parameters: directory & filename");
@@ -59,21 +77,29 @@ public class Main {
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String phrase;
-        String[] words;
         while((phrase = br.readLine()) != null) {
-            phrase = phrase.toLowerCase();
-            words = phrase.split("[^a-zA-Z]");
-            boolean phraseOK = true;
-            for (String word : words) {
-                if(!dictionaryUtil.checkIfWordExists(word)) {
-                    phraseOK = false;
-                    break;
-                }
-            }
-            if(!phrasesToRead.contains(phrase) && !phrase.equals("") && phraseOK) {
-                phrasesToRead.add(phrase);
-            }
+            phrasesToRead.add(phrase);
         }
         return phrasesToRead;
     }
 }
+
+class Couple{
+    private String phrase;
+    private int frequency;
+
+    Couple(String phrase, int frequency) {
+        this.phrase = phrase;
+        this.frequency = frequency;
+    }
+
+    String getPhrase() {
+        return phrase;
+    }
+
+    int getFrequency() {
+        return frequency;
+    }
+}
+
+

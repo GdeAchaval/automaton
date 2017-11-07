@@ -8,22 +8,10 @@ import java.io.*;
  */
 class FileManager {
 
-    void writeToTextFile(String fileName, String content) {
-        try {
-            FileWriter fileWriter = new FileWriter(fileName);
-            fileWriter.write(content);
-            fileWriter.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    File[] getHtmlFilesInDirectory(){
+    File[] getHtmlFilesInDirectory(String path){
         FilenameFilter filter = (dir, name) -> name.endsWith(".html");
 
-        String pathName = System.getProperty("user.dir");
-        File folder = new File(pathName);
+        File folder = new File(path);
         return folder.listFiles(filter);
     }
 

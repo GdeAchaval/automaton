@@ -41,7 +41,7 @@ class WordDetectionAutomaton {
             for (int i = 0; i <= characters.length -2; i++) {
                 State newState = State.createNormalState("_"+name,initialState, htmlTag);
                 name++;
-                aux.addNewTransition(characters[i], newState);
+                aux.addNewTransition(Character.toLowerCase(phrase.charAt(i)), newState);
                 if(characters[i] == ' ')
                     newWordState.add(newState);
                 aux = newState;
@@ -50,7 +50,7 @@ class WordDetectionAutomaton {
             State finalState = State.createEndingState("_"+name, phrase,initialState,htmlTag);
 
             name++;
-            aux.addNewTransition(characters[characters.length - 1], finalState);
+            aux.addNewTransition(Character.toLowerCase(phrase.charAt(characters.length -1)), finalState);
         }
 
         for (State stateThatGoesToNewWord : newWordState) {
