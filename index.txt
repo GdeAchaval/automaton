@@ -1,10 +1,3 @@
-Phrase: hola
-	test.html -> 1
-
 Phrase: mundo
-	t1.html -> 1
-	test.html -> 2
-
-Phrase: hola mundo
-	test.html -> 1
+	test1.html -> 2
 

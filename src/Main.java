@@ -43,20 +43,22 @@ public class Main {
         FileWriter fw = new FileWriter("index.txt");
         for (String phrase : phrases) {
 
-            fw.write("Phrase: "+phrase+ "\n");
-
+            String title = "Phrase: "+phrase+ "\n";
+            String content = "";
             for(Map.Entry<String, List<Couple>> element : frequencies.entrySet()){
                 String nameOfFile = element.getKey();
                 final List<Couple> listOfCouples = element.getValue();
                 for (Couple couple : listOfCouples) {
                     if(couple.getPhrase().equals(phrase)){
                         if(couple.getFrequency() != 0) {
-                            fw.write("\t" + nameOfFile + " -> " + couple.getFrequency() + "\n");
+                            content += "\t" + nameOfFile + " -> " + couple.getFrequency() + "\n";
                         }
                     }
                 }
             }
-            fw.write("\n");
+            if(!content.isEmpty()){
+                fw.write(title + content + "\n");
+            }
         }
         fw.close();
     }
