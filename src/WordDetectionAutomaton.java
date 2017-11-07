@@ -215,7 +215,7 @@ class WordDetectionAutomaton {
 
             //Si es un estado de aceptacion, y termina la palabra se agrega su frequency
             i++;
-            if(i == array.length || array[i] == ' ' || (!Character.isDigit(array[i]) && !Character.isLetter(array[i])) ){
+            if(i == array.length || (!Character.isDigit(array[i]) && !Character.isLetter(array[i])) ){
                 for (String word : endingWords) {
                     frequencies.put(word,frequencies.get(word) + 1);
                 }
