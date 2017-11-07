@@ -14,7 +14,7 @@ public class State {
     private State defaultTransition;
 
     
-    private State(String name) {
+    protected State(String name) {
         this.name = name;
         this.transitions = new HashMap<>();
         wordsOfEndingState = new ArrayList<>();
@@ -34,7 +34,7 @@ public class State {
     }
 
     static State createHtmlTagState(State initState){
-        State result = new State("_tag");
+        State result = new TagState(initState);
         result.defaultTransition = result;
         result.addNewTransition('>', initState);
         return result;
