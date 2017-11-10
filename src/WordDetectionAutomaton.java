@@ -26,7 +26,7 @@ class WordDetectionAutomaton {
 
     private void generateAutomaton(List<String> phrases) {
         int name = 1;
-        List<State> newWordState = new ArrayList<>(); //Son estados que se llego solo con un esp.
+        List<State> allStates = new ArrayList<>(); //Son estados que se llego solo con un esp.
 
         State htmlTag = State.createHtmlTagState(initialState);
         initialState.addNewTransition('<', htmlTag);
@@ -42,8 +42,8 @@ class WordDetectionAutomaton {
                 State newState = State.createNormalState("_"+name,initialState, htmlTag);
                 name++;
                 aux.addNewTransition(Character.toLowerCase(phrase.charAt(i)), newState);
-                if(characters[i] == ' ')
-                    newWordState.add(newState);
+
+                allStates.add(newState);
                 aux = newState;
             }
 
@@ -53,13 +53,14 @@ class WordDetectionAutomaton {
             aux.addNewTransition(Character.toLowerCase(phrase.charAt(characters.length -1)), finalState);
         }
 
-        for (State stateThatGoesToNewWord : newWordState) {
+        //TODO esto seria para todo los estados
+        for (State stateCreated : allStates) {
             final Map<Character, List<State>> initTrans = initialState.getTransitions();
             for (Map.Entry<Character, List<State>> transition : initTrans.entrySet()){
                 char character = transition.getKey();
                 if(character != '<') {
                     for (State state : transition.getValue()) {
-                        stateThatGoesToNewWord.addNewTransition(character, state);
+                        stateCreated.addNewTransition(character, state);
                     }
                 }
             }
@@ -214,12 +215,10 @@ class WordDetectionAutomaton {
             List<String> endingWords = currentState.getEndingWords();
 
             //Si es un estado de aceptacion, y termina la palabra se agrega su frequency
-            i++;
-            if(i == array.length || (!Character.isDigit(array[i]) && !Character.isLetter(array[i])) ){
-                for (String word : endingWords) {
-                    frequencies.put(word,frequencies.get(word) + 1);
-                }
+            for (String word : endingWords) {
+                frequencies.put(word,frequencies.get(word) + 1);
             }
+            i++;
         }
 
         return frequencies;
