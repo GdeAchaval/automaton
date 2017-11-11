@@ -43,7 +43,7 @@ public class State {
     }
 
     private static void createsTransitionsHtmlTag(State tagState, State initState) {
-        State field = new State("q0");
+        State field = new State("_field");
         field.defaultTransition = field;
         tagState.addNewTransition('"', field);
         tagState.addNewTransition('\'', field);
@@ -52,28 +52,28 @@ public class State {
 
 
 
-        State comment1 = new State("q1");
+        State comment1 = new State("_q1");
         tagState.addNewTransition('!', comment1);
         comment1.defaultTransition = tagState;
 
-        State innerComment = new State("aux");
+        State innerComment = new State("_q0");
         tagState.addNewTransition('<', innerComment);
         innerComment.defaultTransition = tagState;
         innerComment.addNewTransition('!', comment1);
 
-        State comment2 = new State("q2");
+        State comment2 = new State("_q2");
         comment1.addNewTransition('-',comment2);
         comment2.defaultTransition = tagState;
 
-        State commentState = new State("q3");
+        State commentState = new State("_com");
         comment2.addNewTransition('-',commentState);
         commentState.defaultTransition = commentState;
 
-        State endComment1 = new State("q4");
+        State endComment1 = new State("_q3");
         commentState.addNewTransition('-',endComment1);
         endComment1.defaultTransition = commentState;
 
-        State endComment2 = new State("q5");
+        State endComment2 = new State("_q4");
         endComment1.addNewTransition('-',endComment2);
         endComment2.defaultTransition = commentState;
 

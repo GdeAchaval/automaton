@@ -17,8 +17,8 @@ public class Main {
 
         Util.generateDot("noDeterminante.dot", nonDet.getInitialState());
         Util.generateDot("determinante.dot",deterministic.getInitialState());
-        Util.createPNGfromDOT("noDeterminante.dot");
-        Util.createPNGfromDOT("determinante.dot");
+//        Util.createPNGfromDOT("noDeterminante.dot");
+//        Util.createPNGfromDOT("determinante.dot");
 
 
         FileManager fm = new FileManager();

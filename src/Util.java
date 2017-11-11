@@ -80,7 +80,11 @@ class Util {
 
     private static void writeTransition(FileWriter fw, State state, State toState, Character character) throws IOException {
         fw.write("Node" + state.getName() + " -> " + "Node" + toState.getName());
-        fw.write(" [label=\"" + character + "\"];\n");
+        String escapeChar = "";
+        if(character == '\'' || character == '\"'){
+            escapeChar += "\\";
+        }
+        fw.write(" [label=\"" + escapeChar + character + "\"];\n");
     }
 
     static void createPNGfromDOT(String name) throws IOException {
