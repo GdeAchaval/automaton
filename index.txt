@@ -5,5 +5,5 @@ Phrase: mundo
 	4mundos.html -> 4
 
 Phrase: arbol
-	test1.html -> 7
+	test1.html -> 5
 

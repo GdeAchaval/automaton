@@ -34,15 +34,15 @@ public class State {
     }
 
     static State createHtmlTagState(State initState){
-        State result = new TagState(initState);
-//        State result = new State("_tag");
+//        State result = new TagState(initState);
+        State result = new State("_tag");
         result.defaultTransition = result;
         result.addNewTransition('>', initState);
-//        createsTransitionsHtmlTag(result);
+        createsTransitionsHtmlTag(result, initState);
         return result;
     }
 
-    private static void createsTransitionsHtmlTag(State tagState) {
+    private static void createsTransitionsHtmlTag(State tagState, State initState) {
         State field = new State("q0");
         field.defaultTransition = field;
         tagState.addNewTransition('"', field);
@@ -50,9 +50,16 @@ public class State {
         field.addNewTransition('"', tagState);
         field.addNewTransition('\'', tagState);
 
+
+
         State comment1 = new State("q1");
         tagState.addNewTransition('!', comment1);
         comment1.defaultTransition = tagState;
+
+        State innerComment = new State("aux");
+        tagState.addNewTransition('<', innerComment);
+        innerComment.defaultTransition = tagState;
+        innerComment.addNewTransition('!', comment1);
 
         State comment2 = new State("q2");
         comment1.addNewTransition('-',comment2);
@@ -70,7 +77,7 @@ public class State {
         endComment1.addNewTransition('-',endComment2);
         endComment2.defaultTransition = commentState;
 
-        endComment2.addNewTransition('>', tagState);
+        endComment2.addNewTransition('>', initState);
 
     }
 
