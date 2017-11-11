@@ -10,19 +10,19 @@ public class State {
 
     private String name;
     private Map<Character, List<State>> transitions;
-    private List<String> wordsOfEndingState;
+    private Set<String> wordsOfEndingState;
     private State defaultTransition;
 
     
     protected State(String name) {
         this.name = name;
         this.transitions = new HashMap<>();
-        wordsOfEndingState = new ArrayList<>();
+        wordsOfEndingState = new HashSet<>();
     }
 
     private State(String name, String wordOfEndingState) {
         this.name = name;
-        wordsOfEndingState = new ArrayList<>();
+        wordsOfEndingState = new HashSet<>();
         wordsOfEndingState.add(wordOfEndingState);
         this.transitions = new HashMap<>();
     }
@@ -35,9 +35,43 @@ public class State {
 
     static State createHtmlTagState(State initState){
         State result = new TagState(initState);
+//        State result = new State("_tag");
         result.defaultTransition = result;
         result.addNewTransition('>', initState);
+//        createsTransitionsHtmlTag(result);
         return result;
+    }
+
+    private static void createsTransitionsHtmlTag(State tagState) {
+        State field = new State("q0");
+        field.defaultTransition = field;
+        tagState.addNewTransition('"', field);
+        tagState.addNewTransition('\'', field);
+        field.addNewTransition('"', tagState);
+        field.addNewTransition('\'', tagState);
+
+        State comment1 = new State("q1");
+        tagState.addNewTransition('!', comment1);
+        comment1.defaultTransition = tagState;
+
+        State comment2 = new State("q2");
+        comment1.addNewTransition('-',comment2);
+        comment2.defaultTransition = tagState;
+
+        State commentState = new State("q3");
+        comment2.addNewTransition('-',commentState);
+        commentState.defaultTransition = commentState;
+
+        State endComment1 = new State("q4");
+        commentState.addNewTransition('-',endComment1);
+        endComment1.defaultTransition = commentState;
+
+        State endComment2 = new State("q5");
+        endComment1.addNewTransition('-',endComment2);
+        endComment2.defaultTransition = commentState;
+
+        endComment2.addNewTransition('>', tagState);
+
     }
 
 
@@ -93,7 +127,9 @@ public class State {
     }
     
     List<String> getEndingWords(){
-        return wordsOfEndingState;
+        List<String> list = new ArrayList<>();
+        list.addAll(wordsOfEndingState);
+        return list;
     }
 
     public String toString(){

@@ -46,14 +46,13 @@ class WordDetectionAutomaton {
                 allStates.add(newState);
                 aux = newState;
             }
-
             State finalState = State.createEndingState("_"+name, phrase,initialState,htmlTag);
+            allStates.add(finalState);
 
             name++;
             aux.addNewTransition(Character.toLowerCase(phrase.charAt(characters.length -1)), finalState);
         }
 
-        //TODO esto seria para todo los estados
         for (State stateCreated : allStates) {
             final Map<Character, List<State>> initTrans = initialState.getTransitions();
             for (Map.Entry<Character, List<State>> transition : initTrans.entrySet()){
@@ -95,14 +94,13 @@ class WordDetectionAutomaton {
                 List<String> endingWords = nonDeterminState.getEndingWords();
                 determinState.addEndingWords(endingWords);
             }
-            else{
-                Map<Character, List<State>> trans = nonDeterminState.getTransitions();
-                for (Map.Entry<Character, List<State>> transition : trans.entrySet()){
-                    char character = transition.getKey();
-                    for (State state : transition.getValue()) {
-                        addToMap(character,state, determinTransitions);
-                        addToMap(character, state.getName(), nameOfNewStates);
-                    }
+
+            Map<Character, List<State>> trans = nonDeterminState.getTransitions();
+            for (Map.Entry<Character, List<State>> transition : trans.entrySet()){
+                char character = transition.getKey();
+                for (State state : transition.getValue()) {
+                    addToMap(character,state, determinTransitions);
+                    addToMap(character, state.getName(), nameOfNewStates);
                 }
             }
 

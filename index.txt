@@ -1,3 +1,9 @@
 Phrase: hola
-	test1.html -> 4
+	20holas.html -> 20
+
+Phrase: mundo
+	4mundos.html -> 4
+
+Phrase: arbol
+	test1.html -> 7
 
